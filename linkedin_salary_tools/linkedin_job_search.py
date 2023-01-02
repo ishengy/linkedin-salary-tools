@@ -16,10 +16,36 @@ import scipy.stats as stats
 
 
 class linkedin_job_search(Linkedin):
+    """
+    Class that inherits from the linkedin_api package.
+
+    Additional functions are explicitly used to obtain job descriptions,
+    perform salary extraction, and other help functions such as developing KDE,
+    bootstrap resampling, etc.
+    """
     def find_salary(self, text):
+        """
+        Find dollar amounts within a provided string.
+
+        Parameters:
+            text (str): text containing dollar amounts to extract
+
+        Returns:
+            (list) list of string representation of dollar amounts
+        """
         return re.findall(r"\$\d{2,3}\,\d{3}", text)
 
     def flatten(self, big_list):
+        """
+        Flatten list of lists into a list object, while converting
+        string dollar amounts to int amounts.
+
+        Parameters:
+            big_list (list of lists): list of lists containing dollar amounts as strings
+        
+        Returns:
+            (list) list of dollar amounts as ints
+        """
         return [
             int(item.replace("$", "").replace(",", ""))
             for sublist in big_list
@@ -27,6 +53,16 @@ class linkedin_job_search(Linkedin):
         ]
 
     def outlier_removal(self, arr, how="tukey"):
+        """
+        Remove salary outliers via a specified removal method.
+
+        Parameters:
+            arr (Pandas Series): series containing int salaries
+            how (str): outlier removal methods of tukey, z-score, or modified-z
+
+        Returns:
+            removed (Pandas Series): series containing int salaries with outliers removed
+        """
         if how == "tukey":
             q1 = np.quantile(arr, 0.25)
             q3 = np.quantile(arr, 0.75)
@@ -47,6 +83,15 @@ class linkedin_job_search(Linkedin):
         return removed
 
     def get_linkedin_job_desc(self, job_searches):
+        """
+        Aquire the job description of a LinkedIn job posting.
+
+        Parameters:
+            job_searches (list of dict): list containing job posting metadata as dict objects
+
+        Returns:
+            job_desc_list (list): list of job descriptions
+        """
         job_desc_list = []
         i = 0
         cum_time = 0
@@ -62,6 +107,17 @@ class linkedin_job_search(Linkedin):
         return job_desc_list
 
     def extract_salaries(self, job_desc_list, exempt=True):
+        """
+        Function to extract salaries from job descriptions and
+        flatten the object to a 1D list.
+
+        Parameters:
+            job_desc_list (list): list of job descriptions
+            exempt (boolean): Whether or not to remove non-exempt salaries. Default value is True.
+
+        Returns:
+            flattened_salaries (Pandas Series): series of dollar amounts as ints
+        """
         salaries = [
             self.find_salary(job_text)
             for job_text in job_desc_list
@@ -75,10 +131,28 @@ class linkedin_job_search(Linkedin):
         return flattened_salaries
 
     def extract_job_title(self, job_searches):
+        """
+        Acquire job title from LinkedIn job postings.
+
+        Parameters:
+            job_searches (list of dict): list containing job posting metadata as dict objects
+
+        Returns:
+            (string): most frequent job title
+        """
         job_title_list = [str.lower(jd["title"]) for jd in job_searches]
         return max(set(job_title_list), key=job_title_list.count)
 
     def bootstrap_resample(self, arr):
+        """
+        Bootstrap resample salaries from 3 random draws
+
+        Parameters:
+            arr (list): list containing int salaries
+
+        Returns:
+            bootstrapped_salaries (Pandas Series): bootstrapped salaries
+        """
         resampled_means = pd.Series(
             [arr.sample(3).mean() for i in range(0, 1000)], name="salaries"
         )
@@ -86,6 +160,17 @@ class linkedin_job_search(Linkedin):
         return bootstrapped_salaries
 
     def test_normality(self, observed_data, alpha=1e-3):
+        """
+        Performs Chi-Square Test for Normality to check whether or not 
+        the sample set of salaries follows an approximately normal distribution.
+
+        Parameters:
+            observed_data (Pandas Series): series of salaries
+            alpha (float): the critical value used to reject the null hypothesis.
+
+        Returns:
+            (boolean): If the null hypothesis was rejected (False)
+        """
         chi_square_test_statistic, p_value = stats.normaltest(observed_data)
         # null hypothesis: x comes from a normal distribution
         if p_value < alpha:
@@ -96,6 +181,18 @@ class linkedin_job_search(Linkedin):
             return True
 
     def kde_estimate(self, salaries, bw_method):
+        """
+        Perform kernel density estimation on a sample set.
+
+        Parameters:
+            salaries (Pandas Series): series containing salaries
+            bw_method (str, scalar or callable):
+                The method used to calculate the estimator bandwidth.
+                Sample parameter found in scipy.stats.gaussian_kde
+
+        Returns:
+            kde (numpy array): numpy array containing the KDE trained on the provided sample set.
+        """
         xmin, xmax = min(salaries), max(salaries)
         x = np.linspace(xmin, xmax, 100)
         kernel = stats.gaussian_kde(salaries, bw_method=bw_method)
@@ -106,7 +203,6 @@ class linkedin_job_search(Linkedin):
         self,
         job_title_code,
         days,
-        use_normal=False,
         bootstrap=True,
         update_table=False,
         col_adj_city="New York, NY, United States",
@@ -114,6 +210,30 @@ class linkedin_job_search(Linkedin):
         limit=-1,
         experience=None,
     ):
+        """
+        Function used to streamline process used to gather job descriptions,
+        extract salaries, and develop distribution to explain the sampled salaries.
+
+        Parameters:
+            job_title_code (string): the job title code found in the URL
+            days (int): the number of days to look back 
+            bootstrap (boolean): whether or not to bootstrap resample the sample set
+            update_table (boolean): whether or not to update the Numbeo table
+            col_adj_city (string): location where you are located
+            col_with_rent (boolean): use the CoL With Rent Index instead of the normal CoL (True)
+            limit (int): the maximum number of job descriptions to pull (use -1 for no limit)
+            experience (list of strings): 
+                A list of experience levels, one or many of “1”, “2”, “3”, “4”, “5” and “6” 
+                (internship, entry level, associate, mid-senior level, director, and executive, respectively)
+
+        Returns:
+            salaries_no_outliers (Pandas Series): series containing int salaries with outliers removed
+            common_title (string): most frequently used job title, 
+            a (float): alpha, 
+            mu (float): shape or average,
+            sigma (float): scale or standard deviation, 
+            n (int): number of salaries found
+        """
 
         # GET a profile
         print("Gathering Job Postings")
