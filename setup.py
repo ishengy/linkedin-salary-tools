@@ -16,7 +16,7 @@ setuptools.setup(
         "Bug Tracker": "https://github.com/ishengy/linkedin-salary-tools/issues"
     },
     license='MIT',
-    packages=['linkedin-salary-tools'],
+    packages=['linkedin_salary_tools'],
     install_requires=[
         'linkedin-api @ git+https://github.com/tomquirk/linkedin-api.git',
         'pandas',
