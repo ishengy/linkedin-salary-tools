@@ -13,7 +13,6 @@ from bs4 import BeautifulSoup
 
 
 class col_adjustments:
-
     def __init__(self):
         self.bls_state_salary = pd.read_csv("data/numbeo_col.csv")
         self.cities = self.bls_state_salary.City.unique()
@@ -24,11 +23,11 @@ class col_adjustments:
         status_code = response.status_code
 
         if status_code == 200:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            col_table = soup.find('table',{'class':'stripe'})
-            df = pd.read_html(str(col_table))[0].drop(columns = 'Rank')
-            df['order'] = np.where(df.City == 'New York, NY, United States', 1, 0)
-            df = df.sort_values(['order'], ascending=False)
+            soup = BeautifulSoup(response.text, "html.parser")
+            col_table = soup.find("table", {"class": "stripe"})
+            df = pd.read_html(str(col_table))[0].drop(columns="Rank")
+            df["order"] = np.where(df.City == "New York, NY, United States", 1, 0)
+            df = df.sort_values(["order"], ascending=False)
             df.to_csv("data/numbeo_col.csv", index=False)
             msg = "COL Table Updated"
         else:
@@ -43,6 +42,6 @@ class col_adjustments:
         else:
             col = "Cost of Living Index"
 
-        col_city_index = city_row[col].values[0]/100
+        col_city_index = city_row[col].values[0] / 100
 
         return col_city_index
