@@ -18,7 +18,7 @@ setuptools.setup(
     license='MIT',
     packages=['linkedin-salary-tools'],
     install_requires=[
-        'git+https://github.com/tomquirk/linkedin-api.git',
+        'linkedin-api @ git+https://github.com/tomquirk/linkedin-api.git',
         'pandas',
         're',
         'time',
