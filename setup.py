@@ -20,8 +20,6 @@ setuptools.setup(
     install_requires=[
         'linkedin-api @ git+https://github.com/tomquirk/linkedin-api.git',
         'pandas',
-        're',
-        'time',
         'numpy',
         'scipy',
         'requests',
