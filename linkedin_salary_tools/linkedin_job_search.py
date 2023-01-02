@@ -7,7 +7,7 @@ Created on Sat Dec 17 02:17:06 2022
 """
 
 from linkedin_api import Linkedin
-import col_adjustments as ca
+from .col_adjustments import col_adjustments as ca
 import pandas as pd
 import re
 import time
