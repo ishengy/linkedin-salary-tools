@@ -42,7 +42,7 @@ class linkedin_job_search(Linkedin):
 
         Parameters:
             big_list (list of lists): list of lists containing dollar amounts as strings
-        
+
         Returns:
             (list) list of dollar amounts as ints
         """
@@ -156,7 +156,9 @@ class linkedin_job_search(Linkedin):
         resampled_means = pd.Series(
             [arr.sample(3).mean() for i in range(0, 1000)], name="salaries"
         )
-        bootstrapped_salaries = arr.append(resampled_means, ignore_index=True)
+        bootstrapped_salaries = pd.concat(
+            [arr, resampled_means], ignore_index=True
+        )
         return bootstrapped_salaries
 
     def test_normality(self, observed_data, alpha=1e-3):
@@ -266,8 +268,8 @@ class linkedin_job_search(Linkedin):
             print("Bootstrapping")
             try:
                 resampled_means = self.bootstrap_resample(salaries_no_outliers)
-                salaries_no_outliers = salaries_no_outliers.append(
-                    resampled_means, ignore_index=True
+                salaries_no_outliers = pd.concat(
+                    [salaries_no_outliers, resampled_means], ignore_index=True
                 )
                 salaries_no_outliers = self.outlier_removal(
                     salaries_no_outliers, how="tukey"
