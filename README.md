@@ -14,7 +14,6 @@ As such, all parent [Legal Notices](https://github.com/tomquirk/linkedin-api#leg
 **Python >= 3.6 required!**
 
 This repo can be pip installed via:
-
 `pip install git+https://github.com/ishengy/linkedin-salary-tools`
 
 A pypi option is currently not on the roadmap.
@@ -46,7 +45,7 @@ This project violates Linkedin's User Agreement Section 8.2, and because of this
 ## Terms and Conditions
 By using this project, you agree to the following Terms and Conditions. We reserve the right to block any user of this repository that does not meet these conditions.
 
-Usage
+### Usage
 This project may not be used for any of the following:
 
 - Commercial use
