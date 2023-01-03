@@ -17,16 +17,17 @@ class col_adjustments:
     Class that contains functions used to obtain the latest Cost of Living indicies from Numbeo.
     """
 
-    def __init__(self, csv_cost_of_living):
+    def __init__(self, path_to_numbeo):
         """
         Constructor that grabs the most recently scraped Numbeo Cost of Living table
         and all cities with an index.
 
         Parameters:
-            csv_cost_of_living (string): path to csv file containing cost of living indices from Numbeo
+            path_to_numbeo (string): path to csv file containing cost of living indices from Numbeo
         """
-        self.bls_state_salary = pd.read_csv(csv_cost_of_living)
+        self.bls_state_salary = pd.read_csv(path_to_numbeo)
         self.cities = self.bls_state_salary.City.unique()
+        self.path_to_numbeo = path_to_numbeo
 
     def update_COL_table(self):
         """
@@ -48,10 +49,11 @@ class col_adjustments:
             df = pd.read_html(str(col_table))[0].drop(columns="Rank")
             df["order"] = np.where(df.City == "New York, NY, United States", 1, 0)
             df = df.sort_values(["order"], ascending=False)
-            df.to_csv("data/numbeo_col.csv", index=False)
+            df.to_csv(self.path_to_numbeo, index=False)
             msg = "COL Table Updated"
         else:
             msg = "COL Table Not Updated."
+        print(msg)
 
         return msg
 

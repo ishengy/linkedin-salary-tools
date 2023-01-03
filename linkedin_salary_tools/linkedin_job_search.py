@@ -7,7 +7,7 @@ Created on Sat Dec 17 02:17:06 2022
 """
 
 from linkedin_api import Linkedin
-from .col_adjustments import col_adjustments as ca
+from .col_adjustments import col_adjustments
 import pandas as pd
 import re
 import time
@@ -278,7 +278,7 @@ class linkedin_job_search(Linkedin):
                 )
 
         if col_adj_city != "New York, NY, United States":
-            col_table = ca.col_adjustments(numbeo_path)
+            col_table = col_adjustments(numbeo_path)
             if update_table:
                 print("Updating Table")
                 col_table.update_COL_table()
