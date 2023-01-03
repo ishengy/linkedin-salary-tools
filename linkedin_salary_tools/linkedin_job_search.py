@@ -209,6 +209,7 @@ class linkedin_job_search(Linkedin):
         col_with_rent=True,
         limit=-1,
         experience=None,
+        numbeo_path=None,
     ):
         """
         Function used to streamline process used to gather job descriptions,
@@ -225,6 +226,7 @@ class linkedin_job_search(Linkedin):
             experience (list of strings): 
                 A list of experience levels, one or many of “1”, “2”, “3”, “4”, “5” and “6” 
                 (internship, entry level, associate, mid-senior level, director, and executive, respectively)
+            numbeo_path (str): path to Numbeo cost of living indices.
 
         Returns:
             salaries_no_outliers (Pandas Series): series containing int salaries with outliers removed
@@ -276,7 +278,7 @@ class linkedin_job_search(Linkedin):
                 )
 
         if col_adj_city != "New York, NY, United States":
-            col_table = ca.col_adjustments()
+            col_table = ca.col_adjustments(numbeo_path)
             if update_table:
                 print("Updating Table")
                 col_table.update_COL_table()
