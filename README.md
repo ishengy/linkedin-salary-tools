@@ -1,17 +1,17 @@
 # linkedin-salary-tools
 
-## Abstract
-Since November 1st 2022, NYC law mandates that salary bands are included in the job description. This makes New York City one of a handful of locations that provide this information even before the interview stage. In an attempt to make this data even more easily accessible to people out looking for a new job or negotiating a raise, I created this repo to house a few classes that will gather job descriptions from LinkedIn for specific job titles, extract the salary band information, develop a distribution, and even attempt to rescale that data to another location based on cost of living adjustments indicies with NYC as its baseline.
+Python tools built to retrieve job descriptions from LinkedIn jobs, extract salary band information, built distributions, adjust for cost of living, etc.
 
-It's not a perfect solution but I hope this information will provide some benefit for someone out there.
+## Purpose
+Since November 1st 2022, NYC law mandates that salary bands are included in most job descriptions. This makes New York City one of a handful of locations that provide this information even before the interview stage. In an attempt to make this data even more accessible to people out looking for a new job or negotiating a raise, I created this repo to house a couple classes that will gather job descriptions from LinkedIn for specific job titles, extract the salary band information, develop a distribution, and even attempt to rescale that data to another location based on cost of living adjustments indicies with NYC as its baseline.
 
-## Credits:
-The foundations of this repo were developed by [tomquirk](https://github.com/tomquirk/). `Linkedin_salary_tools` directly inherits from his [linkedin-api repo](https://github.com/tomquirk/linkedin-api). 
+## Credits
+`Linkedin_salary_tools` directly inherits from [linkedin-api](https://github.com/tomquirk/linkedin-api), which was developed by [tomquirk and co](https://github.com/tomquirk/). 
 
 As such, all parent [Legal Notices](https://github.com/tomquirk/linkedin-api#legal) and [Terms and Conditions](https://github.com/tomquirk/linkedin-api#terms-and-conditions) apply to this child repo too (also included at the bottom of this README).
 
 ## Installation
-**Python >= 3.6 required!**
+**Python > 3.6 required!**
 
 This repo can be pip installed via:
 `pip install git+https://github.com/ishengy/linkedin-salary-tools`
@@ -19,7 +19,19 @@ This repo can be pip installed via:
 A pypi option is currently not on the roadmap.
 
 ## Getting started
-**Example usage:**
+**Finding Job Title Codes**
+
+After selecting a *Title* within *All Filters* on the LinkedIn Job Search page:
+
+![linkedin all filters](/images/linkedin_filter.png)
+
+you can find the associated code after "f_T=" in the URL:
+<pre>
+https://www.linkedin.com/jobs/search/?currentJobId=1234567890&<b>f_T=25190</b>
+</pre>
+
+
+**Sample Code**
 ``` python
 from linkedin_salary_tools import ljs
 
@@ -36,6 +48,16 @@ job_searches = api.search_jobs(
 job_desc_list = api.get_linkedin_job_desc(job_searches)
 salaries = api.extract_salaries(job_desc_list)
 ```
+
+**Dealing with a `CHALLENGE`**
+
+If you encounter a `CHALLENGE` after calling `linkedin_job_search()`, it's most likely due to 2FA. The parent repo states that rate limiting could also be a potential reason, but it looks like no jobs are returned instead of being issued a challenge.
+
+## How does the API work?
+Because this repo's main focus deals with salary extraction please refer to [linkedin-api's in-depth overview](https://github.com/tomquirk/linkedin-api#in-depth-overview).
+
+## How are the salary distributions developed?
+NYC only requires salary bands to be disclosed so we have an abundance of lower and upper bounds. This usually creates a short and wide bell shaped curve after extracting enough bands. Bootstrap resampling was implemented to develop the shape into what should be either a normal or skewed-normal distribution since averaging a few randomly sampled bounds should result in numbers that will fall in the middle and build up the peak if performed enough times. 
 
 ## Legal
 This code is in no way affiliated with, authorized, maintained, sponsored or endorsed by Linkedin or any of its affiliates or subsidiaries. This is an independent and unofficial API. Use at your own risk.
