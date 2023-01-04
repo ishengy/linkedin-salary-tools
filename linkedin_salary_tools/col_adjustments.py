@@ -48,7 +48,7 @@ class col_adjustments:
             col_table = soup.find("table", {"class": "stripe"})
             df = pd.read_html(str(col_table))[0].drop(columns="Rank")
             df["order"] = np.where(df.City == "New York, NY, United States", 1, 0)
-            df = df.sort_values(["order"], ascending=False)
+            df = df.sort_values(["order", "City"], ascending=[False, True])
             df.to_csv(self.path_to_numbeo, index=False)
             msg = "COL Table Updated"
         else:

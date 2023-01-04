@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='linkedin-salary-tools',
-    version='0.2.4',
+    version='0.2.5',
     author='Ivan Sheng',
     author_email='is1048@nyu.edu',
     description='Python tools to pull job descriptions and extract salary bands from them.',
