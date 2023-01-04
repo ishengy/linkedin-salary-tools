@@ -205,6 +205,7 @@ class linkedin_job_search(Linkedin):
         self,
         job_title_code,
         days,
+        search_term=None,
         bootstrap=True,
         update_table=False,
         col_adj_city="New York, NY, United States",
@@ -243,6 +244,7 @@ class linkedin_job_search(Linkedin):
         print("Gathering Job Postings")
         job_searches = self.search_jobs(
             job_title=[job_title_code],
+            keywords=search_term,
             job_type=["F"],
             location_name="New York City Metropolitan Area",
             listed_at=24 * 60 * 60 * days,
