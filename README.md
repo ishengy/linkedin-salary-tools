@@ -1,6 +1,6 @@
 # linkedin-salary-tools
 
-Python tools built to retrieve job descriptions from LinkedIn jobs, extract salary band information, built distributions, adjust for cost of living, etc.
+Python tools built to retrieve job descriptions from LinkedIn jobs, extract salary band information, build distributions, adjust for cost of living, etc.
 
 ## Purpose
 Since November 1st 2022, NYC law mandates that salary bands are included in most job descriptions. This makes New York City one of a handful of locations that provides this information even before the interview stage. In an attempt to make this data even more accessible to people out looking for a new job or negotiating a raise, I created this repo to house a couple classes that will gather job descriptions from LinkedIn for specific job titles, extract the salary band information, develop a distribution, and even attempt to rescale that data to another location based on cost of living adjustments indices with NYC as its baseline.
